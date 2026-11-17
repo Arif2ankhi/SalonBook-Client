@@ -1,11 +1,6 @@
 "use client";
 
-// TODO (Phase 1 - Auth): Replace this placeholder with Better Auth's client
-// hook once the server-side Better Auth setup is complete, e.g.:
-//   import { authClient } from "@/lib/auth-client";
-//   const { data, isPending } = authClient.useSession();
-// The navbar/dashboard already consume the same interface below, so swapping
-// the implementation should not require UI changes.
+import { authClient } from "@/lib/auth-client";
 
 export type UserRole = "customer" | "admin";
 
@@ -23,7 +18,25 @@ interface AuthState {
   isPending: boolean;
 }
 
+/** Thin wrapper around Better Auth's useSession so the UI stays simple. */
 export function useAuth(): AuthState {
-  // Placeholder: no session until Better Auth is wired up.
-  return { user: null, isPending: false };
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
+
+  if (isPending) {
+    return { user: null, isPending: true };
+  }
+
+  return {
+    user: user
+      ? {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image ?? null,
+          role: ((user as { role?: string }).role ?? "customer") as UserRole,
+        }
+      : null,
+    isPending: false,
+  };
 }

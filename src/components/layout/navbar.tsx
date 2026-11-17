@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { CalendarCheck, LogOut, Menu, UserRound } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/layout/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -41,9 +42,10 @@ export function Navbar() {
 
   const closeMobile = () => setMobileOpen(false);
 
-  // TODO (Phase 1 - Auth): call Better Auth signOut here, then redirect home.
-  const handleLogout = () => {
-    console.log("logout placeholder");
+  const handleLogout = async () => {
+    await authClient.signOut();
+    // Full navigation so every server component re-renders with the new session.
+    window.location.replace("/");
   };
 
   const navLinks = user
