@@ -20,12 +20,12 @@ interface HeroSlide {
 
 const HERO_SLIDES: HeroSlide[] = [
   {
-    image: "/images/hero/hero-welcome.jpg",
-    alt: "Cozy salon interior with leather chairs, warm pendant lights and brick walls",
-    eyebrow: "Welcome to SalonBook",
-    title: "Where Style Meets Comfort",
+    image: "/images/hero/hero-makeup.jpg",
+    alt: "Makeup artist applying a glamorous pink look",
+    eyebrow: "Makeup & Skincare",
+    title: "Glow Like Never Before",
     subtitle:
-      "Step into a world of expert styling, soothing treatments, and personalized care — book your favorite service in minutes.",
+      "Radiant facials, flawless makeup, and premium skincare treatments tailored just for you.",
   },
   {
     image: "/images/hero/hero-hair.jpg",
@@ -36,12 +36,20 @@ const HERO_SLIDES: HeroSlide[] = [
       "From trendy cuts and blowouts to vibrant coloring, our stylists bring out the best in every strand.",
   },
   {
-    image: "/images/hero/hero-makeup.jpg",
-    alt: "Makeup artist applying a glamorous pink look",
-    eyebrow: "Makeup & Skincare",
-    title: "Glow Like Never Before",
+    image: "/images/hero/hero-welcome.jpg",
+    alt: "Cozy salon interior with leather chairs, warm pendant lights and brick walls",
+    eyebrow: "Our Salon",
+    title: "Where Style Meets Comfort",
     subtitle:
-      "Radiant facials, flawless makeup, and premium skincare treatments tailored just for you.",
+      "Step into a world of expert styling, soothing treatments, and personalized care — book your favorite service in minutes.",
+  },
+  {
+    image: "/images/hero/hero-nails.jpg",
+    alt: "Manicurist applying sparkly polish to freshly painted pink nails",
+    eyebrow: "Manicure & Pedicure",
+    title: "Nails That Steal the Show",
+    subtitle:
+      "From classic manis to bold nail art, treat your hands and feet to some well-deserved pampering.",
   },
 ];
 
