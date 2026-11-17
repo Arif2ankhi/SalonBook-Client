@@ -21,7 +21,7 @@ interface HeroSlide {
 const HERO_SLIDES: HeroSlide[] = [
   {
     image: "/images/hero/hero-salon.jpg",
-    alt: "Modern salon interior with styling chairs and mirrors",
+    alt: "Cozy salon interior with leather chairs, warm pendant lights and brick walls",
     eyebrow: "Welcome to SalonBook",
     title: "Where Style Meets Comfort",
     subtitle:
@@ -67,7 +67,7 @@ export function HeroSlider() {
                 fill
                 priority={index === 0}
                 sizes="100vw"
-                className="object-cover"
+                className="object-cover saturate-[1.15] contrast-[1.08] brightness-[1.03]"
               />
               {/* Readability overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10" />
