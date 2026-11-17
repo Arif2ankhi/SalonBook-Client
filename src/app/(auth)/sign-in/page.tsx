@@ -31,9 +31,11 @@ const SignInPage = () => {
 
     if (data) {
       toast.success("Signed in successfully");
+      console.log("Signed in user:", data);
     }
     if (error) {
       toast.error("Invalid email or password");
+      console.error("Sign in error:", error);
     }
   };
 

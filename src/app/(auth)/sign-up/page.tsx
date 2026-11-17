@@ -46,6 +46,8 @@ const SignUpPage = () => {
       return;
     }
 
+    console.log("Sign up form values:", { name, email, image: image || "(none)" });
+
     setIsSubmitting(true);
     const { data, error } = await authClient.signUp.email({
       name,
@@ -59,9 +61,11 @@ const SignUpPage = () => {
 
     if (data) {
       toast.success("Account created successfully. Welcome to SalonBook!");
+      console.log("Signed up user:", data);
     }
     if (error) {
       toast.error(error.message ?? "Could not create your account. Try again.");
+      console.error("Sign up error:", error);
     }
   };
 
