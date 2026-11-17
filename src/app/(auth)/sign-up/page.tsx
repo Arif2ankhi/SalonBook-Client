@@ -54,8 +54,8 @@ const SignUpPage = () => {
       email,
       password,
       ...(image ? { image } : {}),
-      // New accounts are always customers — roles are assigned by admins only.
-      callbackURL: "/dashboard",
+      // Redirect to home for now; switch to /dashboard once it is built.
+      callbackURL: "/",
     });
     setIsSubmitting(false);
 

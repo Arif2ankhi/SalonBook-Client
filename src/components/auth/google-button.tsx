@@ -10,7 +10,8 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
   const signInWithGoogle = async () => {
     const { error } = await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/dashboard",
+      // Redirect to home for now; switch to /dashboard once it is built.
+      callbackURL: "/",
     });
 
     if (error) {

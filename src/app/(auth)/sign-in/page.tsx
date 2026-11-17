@@ -24,8 +24,8 @@ const SignInPage = () => {
     const { data, error } = await authClient.signIn.email({
       email,
       password,
-      // Dashboard renders customer or admin content based on the user role.
-      callbackURL: "/dashboard",
+      // Redirect to home for now; switch to /dashboard once it is built.
+      callbackURL: "/",
     });
     setIsSubmitting(false);
 
