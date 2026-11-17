@@ -109,7 +109,7 @@ export function Footer() {
           <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             <li className="flex items-start gap-2">
               <Phone className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-              <span>+1 (555) 123-4567</span>
+              <span>+44 (555) 123-4567</span>
             </li>
             <li className="flex items-start gap-2">
               <Mail className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
@@ -117,7 +117,7 @@ export function Footer() {
             </li>
             <li className="flex items-start gap-2">
               <MapPin className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-              <span>123 Beauty Lane, Downtown, Springfield</span>
+              <span>143 Peticott Lane, London, E1 0AL</span>
             </li>
           </ul>
         </div>
