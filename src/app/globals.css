@@ -131,6 +131,18 @@
 }
 
 /* Hero slider (Swiper) custom styles */
+/* Slow "Ken Burns" zoom on the active slide for a cinematic feel */
+@keyframes hero-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+.hero-slider .swiper-slide-active img {
+  animation: hero-zoom 7s ease-out forwards;
+}
 .hero-slider .swiper-pagination-bullet {
   width: 10px;
   height: 10px;

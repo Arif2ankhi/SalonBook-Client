@@ -20,7 +20,7 @@ interface HeroSlide {
 
 const HERO_SLIDES: HeroSlide[] = [
   {
-    image: "/images/hero/hero-salon.jpg",
+    image: "/images/hero/hero-welcome.jpg",
     alt: "Cozy salon interior with leather chairs, warm pendant lights and brick walls",
     eyebrow: "Welcome to SalonBook",
     title: "Where Style Meets Comfort",
