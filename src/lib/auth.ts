@@ -7,7 +7,13 @@ const client = new MongoClient(process.env.MONGODB_URI as string);
 const db = client.db("salonbook");
 
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET,
+  // Allow common local dev ports (Next.js shifts ports when 3000 is busy).
+  trustedOrigins: [
+    process.env.BETTER_AUTH_URL ?? "",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+  ],
   emailAndPassword: {
     enabled: true,
   },

@@ -1,18 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
-export const authClient = createAuthClient({
-  /** The base URL of the server (optional if you're using the same domain) */
-  baseURL: process.env.BETTER_AUTH_URL,
-  // Mirror the server-side user fields so session.user.role is typed.
-  user: {
-    additionalFields: {
-      role: {
-        type: "string" as const,
-        defaultValue: "customer",
-        input: false,
-      },
-    },
-  },
-});
+// No baseURL needed — the client talks to the same domain it runs on,
+// so it keeps working on any dev port and on the deployed domain.
+export const authClient = createAuthClient();
 
 export const { signIn, signUp, signOut, useSession } = authClient;
