@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 const SignInPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = new FormData(e.currentTarget);
@@ -53,7 +53,7 @@ const SignInPage = () => {
         Sign in to book appointments and manage your account.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSignIn} className="mt-6 space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
           <Input

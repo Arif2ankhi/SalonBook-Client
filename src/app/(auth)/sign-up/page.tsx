@@ -11,16 +11,10 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-// Simple password rules: minimum 6 characters, one uppercase, one lowercase.
+// Simple password rule: minimum 6 characters.
 const validatePassword = (password: string) => {
   if (password.length < 6) {
     return "Password must be at least 6 characters long";
-  }
-  if (!/[A-Z]/.test(password)) {
-    return "Password must contain at least one uppercase letter";
-  }
-  if (!/[a-z]/.test(password)) {
-    return "Password must contain at least one lowercase letter";
   }
   return null;
 };
@@ -28,7 +22,7 @@ const validatePassword = (password: string) => {
 const SignUpPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const form = new FormData(e.currentTarget);
@@ -81,7 +75,7 @@ const SignUpPage = () => {
         Join SalonBook to book your favorite salon services.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSignUp} className="mt-6 space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="name">Full Name</Label>
           <Input
@@ -112,8 +106,7 @@ const SignUpPage = () => {
             required
           />
           <p className="text-xs text-muted-foreground">
-            Minimum 6 characters, with at least one uppercase and one lowercase
-            letter.
+            Minimum 6 characters.
           </p>
         </div>
         <div className="space-y-1.5">

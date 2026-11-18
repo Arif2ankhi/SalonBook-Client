@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 /** Shared Google social sign-in button used on the sign-in and sign-up pages. */
 export function GoogleButton({ label = "Continue with Google" }: { label?: string }) {
-  const signInWithGoogle = async () => {
+  const handleGoogleSignIn = async () => {
     const { error } = await authClient.signIn.social({
       provider: "google",
       // Redirect to home for now; switch to /dashboard once it is built.
@@ -24,7 +24,7 @@ export function GoogleButton({ label = "Continue with Google" }: { label?: strin
       variant="outline"
       type="button"
       className="w-full"
-      onClick={signInWithGoogle}
+      onClick={handleGoogleSignIn}
     >
       <svg viewBox="0 0 24 24" aria-hidden="true" className="size-4">
         <path
