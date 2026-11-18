@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
@@ -13,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const SignInPage = () => {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,18 +28,21 @@ const SignInPage = () => {
     console.log("Sign in form values:", { email, password });
 
     setIsSubmitting(true);
+    // NOTE: deliberately no `callbackURL` here. When one is sent, Better Auth
+    // answers with `redirect: true` and its redirect plugin hard-navigates
+    // via `window.location.href` — a full page load that wipes the <Toaster>
+    // before the success toast can be read. We navigate client-side instead.
     const { data, error } = await authClient.signIn.email({
       email,
       password,
-      // Redirect to home for now; switch to /dashboard once it is built.
-      callbackURL: "/",
     });
     setIsSubmitting(false);
 
     if (data) {
-        console.log(data);
       toast.success("Signed in successfully");
-      console.log("Signed in user:", data);
+      // Redirect to home for now; switch to /dashboard once it is built.
+      // Client-side navigation keeps the toast alive on the next page.
+      router.push("/");
     }
     if (error) {
     

@@ -38,7 +38,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Navbar />
         <main className="flex flex-1 flex-col">{children}</main>
         <Footer />
-        <Toaster richColors position="top-right" />
+        <Toaster
+          richColors
+          position="top-right"
+          duration={5000}
+          closeButton
+          toastOptions={{ style: { fontSize: "15px" } }}
+        />
       </body>
     </html>
   );

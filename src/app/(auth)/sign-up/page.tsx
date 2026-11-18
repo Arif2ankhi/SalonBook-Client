@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,6 +22,7 @@ const validatePassword = (password: string) => {
 };
 
 const SignUpPage = () => {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<"customer" | "admin">("customer");
@@ -47,21 +49,22 @@ const SignUpPage = () => {
     console.log("Sign up form values:", { name, email, role, image: image || "(none)" });
 
     setIsSubmitting(true);
+    // No `callbackURL` — Better Auth would turn that into `redirect: true`
+    // and hard-navigate away, killing the toast. We redirect client-side.
     const { data, error } = await authClient.signUp.email({
       name,
       email,
       password,
       role,
       ...(image ? { image } : {}),
-      // Redirect to home for now; switch to /dashboard once it is built.
-      callbackURL: "/",
     } as Parameters<typeof authClient.signUp.email>[0]);
     setIsSubmitting(false);
 
     if (data) {
-        console.log(data);
       toast.success("Account created successfully. Welcome to SalonBook!");
-      console.log("Signed up user:", data);
+      // Redirect to home for now; switch to /dashboard once it is built.
+      // Client-side navigation keeps the toast alive on the next page.
+      router.push("/");
     }
     if (error) {
         console.log(error);

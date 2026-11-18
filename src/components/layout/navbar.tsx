@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { CalendarCheck, LogOut, Menu, UserRound } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ChevronDown, LayoutDashboard, LogOut, Menu, User, UserRound } from "lucide-react";
+import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
@@ -14,6 +15,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -35,6 +37,7 @@ const NAV_LINKS = [
 export function Navbar() {
   const { user } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) =>
@@ -43,9 +46,25 @@ export function Navbar() {
   const closeMobile = () => setMobileOpen(false);
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    // Full navigation so every server component re-renders with the new session.
-    window.location.replace("/");
+    const { error } = await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("User signout successfully");
+          // Refresh server components instead of doing a full page load —
+          // a hard navigation would destroy the <Toaster> and the toast
+          // would vanish before the user could read it. Better Auth clears
+          // its own session cache on /sign-out, so the navbar re-renders
+          // to the signed-out state right away.
+          router.refresh();
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message || "Failed to sign out");
+        },
+      },
+    });
+    if (error) {
+      toast.error(error.message || "Failed to sign out");
+    }
   };
 
   const navLinks = user
@@ -82,11 +101,17 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {user && (
+            <span className="hidden text-sm font-medium text-muted-foreground lg:inline">
+              Welcome, <span className="font-semibold text-foreground">{user.name}</span>
+            </span>
+          )}
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="flex items-center gap-2 rounded-full border p-1 pr-3 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex items-center gap-2 rounded-full border bg-card p-1.5 pr-3 shadow-sm outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Open profile menu"
               >
                 <Avatar className="size-8">
@@ -100,27 +125,47 @@ export function Navbar() {
                 <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">
                   {user.name}
                 </span>
+                <ChevronDown className="size-4 text-muted-foreground" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <p className="truncate text-sm font-semibold">{user.name}</p>
-                  <p className="truncate text-xs font-normal text-muted-foreground">
-                    {user.email}
-                  </p>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem render={<Link href="/dashboard" />}>
-                  <CalendarCheck aria-hidden="true" />
-                  Dashboard
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  variant="destructive"
-                  className="cursor-pointer"
-                  onSelect={handleLogout}
-                >
-                  <LogOut aria-hidden="true" />
-                  Logout
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2 shadow-lg">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="flex flex-col gap-1 p-3">
+                    <p className="truncate text-base font-bold text-foreground">{user.name}</p>
+                    <p className="truncate text-xs font-normal text-muted-foreground">
+                      {user.email}
+                    </p>
+                    <div className="mt-1.5 w-fit rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-secondary-foreground uppercase">
+                      {user.role || "customer"}
+                    </div>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem 
+                    render={<Link href="/dashboard" />}
+                    className="cursor-pointer gap-2.5 rounded-xl py-2.5 font-medium"
+                  >
+                    <LayoutDashboard className="size-4 text-muted-foreground" />
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    render={<Link href="/dashboard/profile" />}
+                    className="cursor-pointer gap-2.5 rounded-xl py-2.5 font-medium"
+                  >
+                    <User className="size-4 text-muted-foreground" />
+                    My profile
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2.5 rounded-xl py-2.5 font-medium text-destructive focus:bg-destructive/10 focus:text-destructive"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="size-4" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
