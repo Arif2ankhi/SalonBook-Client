@@ -31,6 +31,7 @@ const SignUpPage = () => {
     const name = String(form.get("name"));
     const email = String(form.get("email"));
     const password = String(form.get("password"));
+    const role = String(form.get("role")) === "admin" ? "admin" : "customer";
     const image = String(form.get("image") ?? "").trim();
 
     const passwordError = validatePassword(password);
@@ -43,17 +44,18 @@ const SignUpPage = () => {
       return;
     }
 
-    console.log("Sign up form values:", { name, email, image: image || "(none)" });
+    console.log("Sign up form values:", { name, email, role, image: image || "(none)" });
 
     setIsSubmitting(true);
     const { data, error } = await authClient.signUp.email({
       name,
       email,
       password,
+      role,
       ...(image ? { image } : {}),
       // Redirect to home for now; switch to /dashboard once it is built.
       callbackURL: "/",
-    });
+    } as Parameters<typeof authClient.signUp.email>[0]);
     setIsSubmitting(false);
 
     if (data) {
@@ -127,6 +129,18 @@ const SignUpPage = () => {
           </p>
         </div>
         <div className="space-y-1.5">
+          <Label htmlFor="role">Account Type</Label>
+          <select
+            id="role"
+            name="role"
+            defaultValue="customer"
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-lg border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-3"
+          >
+            <option value="customer">Customer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div className="space-y-1.5">
           <Label htmlFor="image">Profile Image URL (optional)</Label>
           <Input
             id="image"
@@ -165,8 +179,8 @@ const SignUpPage = () => {
       </p>
 
       <p className="mt-4 rounded-lg bg-muted px-3 py-2 text-center text-xs text-muted-foreground">
-        Note: Admin accounts are assigned securely by the salon owner and cannot
-        be created through this form.
+        Note: Admin accounts have full dashboard access. Choose Admin only for
+        the salon owner account.
       </p>
     </div>
   );

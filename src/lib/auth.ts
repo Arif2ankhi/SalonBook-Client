@@ -25,12 +25,13 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      // Everyone signs up as a customer. Role can only be changed by an
-      // admin in the database — public sign-up can never set it.
+      // NOTE: the sign-up form lets the user pick customer or admin (per
+      // project request). On the live site this means anyone can
+      // self-register as admin — the assignment brief warns against this.
       role: {
-        type: "string",
-        defaultValue: ["customer", "admin"],
-        input: false,
+        type: ["customer", "admin"],
+        defaultValue: "customer",
+        input: true,
       },
     },
   },
