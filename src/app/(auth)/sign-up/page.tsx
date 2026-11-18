@@ -23,6 +23,7 @@ const validatePassword = (password: string) => {
 const SignUpPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState<"customer" | "admin">("customer");
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,7 +32,6 @@ const SignUpPage = () => {
     const name = String(form.get("name"));
     const email = String(form.get("email"));
     const password = String(form.get("password"));
-    const role = String(form.get("role")) === "admin" ? "admin" : "customer";
     const image = String(form.get("image") ?? "").trim();
 
     const passwordError = validatePassword(password);
@@ -129,16 +129,30 @@ const SignUpPage = () => {
           </p>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="role">Account Type</Label>
-          <select
-            id="role"
-            name="role"
-            defaultValue="customer"
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-lg border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-3"
-          >
-            <option value="customer">Customer</option>
-            <option value="admin">Admin</option>
-          </select>
+          <span className="text-sm font-medium">Joining SalonBook as</span>
+          <div className="flex gap-2">
+            {(
+              [
+                { value: "customer", label: "Customer" },
+                { value: "admin", label: "Admin" },
+              ] as const
+            ).map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setRole(option.value)}
+                aria-pressed={role === option.value}
+                className={cn(
+                  "rounded-full border px-5 py-2 text-sm font-medium transition-colors",
+                  role === option.value
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="image">Profile Image URL (optional)</Label>
