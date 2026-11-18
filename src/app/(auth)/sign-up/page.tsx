@@ -6,7 +6,8 @@ import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
 import { GoogleButton } from "@/components/auth/google-button";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -60,10 +61,12 @@ const SignUpPage = () => {
     setIsSubmitting(false);
 
     if (data) {
+        console.log(data);
       toast.success("Account created successfully. Welcome to SalonBook!");
       console.log("Signed up user:", data);
     }
     if (error) {
+        console.log(error);
       toast.error(error.message ?? "Could not create your account. Try again.");
       console.error("Sign up error:", error);
     }
@@ -122,9 +125,15 @@ const SignUpPage = () => {
             placeholder="https://example.com/me.jpg"
           />
         </div>
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {/* Native button so the form submit event fires (Base UI Button
+            forces type="button", which would block onSubmit). */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={cn(buttonVariants(), "w-full")}
+        >
           {isSubmitting ? "Creating account..." : "Sign Up"}
-        </Button>
+        </button>
       </form>
 
       <div className="my-6 flex items-center gap-3">

@@ -6,7 +6,8 @@ import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
 import { GoogleButton } from "@/components/auth/google-button";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -20,6 +21,8 @@ const SignInPage = () => {
     const email = String(form.get("email"));
     const password = String(form.get("password"));
 
+    console.log("Sign in form values:", { email, password });
+
     setIsSubmitting(true);
     const { data, error } = await authClient.signIn.email({
       email,
@@ -30,10 +33,12 @@ const SignInPage = () => {
     setIsSubmitting(false);
 
     if (data) {
+        console.log(data);
       toast.success("Signed in successfully");
       console.log("Signed in user:", data);
     }
     if (error) {
+    
       toast.error("Invalid email or password");
       console.error("Sign in error:", error);
     }
@@ -69,9 +74,15 @@ const SignInPage = () => {
             required
           />
         </div>
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {/* Native button so the form submit event fires (Base UI Button
+            forces type="button", which would block onSubmit). */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={cn(buttonVariants(), "w-full")}
+        >
           {isSubmitting ? "Signing in..." : "Sign In"}
-        </Button>
+        </button>
       </form>
 
       <div className="my-6 flex items-center gap-3">
