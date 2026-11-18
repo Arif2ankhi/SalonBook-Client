@@ -81,6 +81,32 @@ const SignUpPage = () => {
 
       <form onSubmit={handleSignUp} className="mt-6 space-y-4">
         <div className="space-y-1.5">
+          <span className="text-sm font-medium">Joining SalonBook as</span>
+          <div className="flex gap-2">
+            {(
+              [
+                { value: "customer", label: "Customer" },
+                { value: "admin", label: "Admin" },
+              ] as const
+            ).map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setRole(option.value)}
+                aria-pressed={role === option.value}
+                className={cn(
+                  "rounded-full border px-5 py-2 text-sm font-medium transition-colors",
+                  role === option.value
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-1.5">
           <Label htmlFor="name">Full Name</Label>
           <Input
             id="name"
@@ -127,32 +153,6 @@ const SignUpPage = () => {
           <p className="text-xs text-muted-foreground">
             Minimum 6 characters.
           </p>
-        </div>
-        <div className="space-y-1.5">
-          <span className="text-sm font-medium">Joining SalonBook as</span>
-          <div className="flex gap-2">
-            {(
-              [
-                { value: "customer", label: "Customer" },
-                { value: "admin", label: "Admin" },
-              ] as const
-            ).map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setRole(option.value)}
-                aria-pressed={role === option.value}
-                className={cn(
-                  "rounded-full border px-5 py-2 text-sm font-medium transition-colors",
-                  role === option.value
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="image">Profile Image URL (optional)</Label>
