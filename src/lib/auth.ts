@@ -29,7 +29,7 @@ export const auth = betterAuth({
       // admin in the database — public sign-up can never set it.
       role: {
         type: "string",
-        defaultValue: "customer",
+        defaultValue: ["customer", "admin"],
         input: false,
       },
     },
