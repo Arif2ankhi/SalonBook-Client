@@ -10,7 +10,7 @@ import { authClient } from "@/lib/auth-client";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/layout/logo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,10 +125,15 @@ export function Navbar() {
             </DropdownMenu>
           ) : (
             <div className="hidden items-center gap-2 md:flex">
-              <Button variant="ghost" render={<Link href="/sign-in" />}>
+              <Link
+                href="/sign-in"
+                className={cn(buttonVariants({ variant: "ghost" }))}
+              >
                 Sign In
-              </Button>
-              <Button render={<Link href="/sign-up" />}>Sign Up</Button>
+              </Link>
+              <Link href="/sign-up" className={cn(buttonVariants())}>
+                Sign Up
+              </Link>
             </div>
           )}
 
@@ -184,19 +189,20 @@ export function Navbar() {
                   </Button>
                 ) : (
                   <div className="mt-3 flex flex-col gap-2">
-                    <Button
-                      variant="outline"
-                      render={<Link href="/sign-in" />}
+                    <Link
+                      href="/sign-in"
                       onClick={closeMobile}
+                      className={cn(buttonVariants({ variant: "outline" }))}
                     >
                       Sign In
-                    </Button>
-                    <Button
-                      render={<Link href="/sign-up" />}
+                    </Link>
+                    <Link
+                      href="/sign-up"
                       onClick={closeMobile}
+                      className={cn(buttonVariants())}
                     >
                       Sign Up
-                    </Button>
+                    </Link>
                   </div>
                 )}
               </nav>
