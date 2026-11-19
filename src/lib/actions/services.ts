@@ -31,7 +31,7 @@ export interface NewServicePayload {
   isActive?: boolean;
 }
 
-// Admin Manage Services-এর জন্য সব সার্ভিস
+// Admin Manage Services-for all service
 export const getServices = async (): Promise<SalonService[]> => {
   const res = await fetch(`${API_BASE_URL}/services`, {
     cache: "no-store",
@@ -44,7 +44,7 @@ export const getServices = async (): Promise<SalonService[]> => {
   return res.json();
 };
 
-// Public Browse Services-এর জন্য শুধুমাত্র Active সার্ভিস
+// Public Browse Services-Only Active service
 export const getActiveServices = async (): Promise<SalonService[]> => {
   const res = await fetch(`${API_BASE_URL}/services?status=Active`, {
     cache: "no-store",
@@ -57,7 +57,7 @@ export const getActiveServices = async (): Promise<SalonService[]> => {
   return res.json();
 };
 
-// Service Details পেজের জন্য সিঙ্গেল সার্ভিস
+// Service Details - Single service by id
 export const getServiceById = async (id: string): Promise<SalonService> => {
   const res = await fetch(`${API_BASE_URL}/services/${id}`, {
     cache: "no-store",

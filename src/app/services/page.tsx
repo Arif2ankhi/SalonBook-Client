@@ -39,10 +39,9 @@ export default function BrowseServicesPage() {
   const [sortBy, setSortBy] = useState<SortOption>("default");
 
   useEffect(() => {
-    setIsLoading(true);
+    // isLoading already starts as true, so no need to set it here.
     getActiveServices()
       .then((data) => {
-        // ব্যাকএন্ড থেকে আসা ডেটার মধ্যে শুধু Active সার্ভিস রাখা হচ্ছে
         const activeOnly = Array.isArray(data)
           ? data.filter(
               (item) => item.status !== "Inactive" && item.isActive !== false
@@ -58,7 +57,7 @@ export default function BrowseServicesPage() {
       });
   }, []);
 
-  // ১. Search এবং Category অনুযায়ী ফিল্টার
+  // ১. Filter according to search and category
   const filteredServices = services.filter((service) => {
     const matchesName = service.name
       .toLowerCase()
@@ -70,7 +69,7 @@ export default function BrowseServicesPage() {
     return matchesName && matchesCategory;
   });
 
-  // ২. Price অনুযায়ী সর্ট (Low to High / High to Low)
+  // ২. Sorting By Price  (Low to High / High to Low)
   const sortedServices = [...filteredServices].sort((a, b) => {
     if (sortBy === "price-asc") {
       return Number(a.price) - Number(b.price);

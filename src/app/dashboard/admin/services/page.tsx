@@ -118,7 +118,8 @@ export default function ManageServicesPage() {
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const loadServices = () => {
-    setIsLoading(true);
+    // isLoading already starts as true, so no need to set it here —
+    // a synchronous setState would trip react-hooks/set-state-in-effect.
     getServices()
       .then((data) => {
         setServices(Array.isArray(data) ? data : []);

@@ -65,9 +65,18 @@ const dashboardHeadingByRole: Record<Role, { label: string; title: string }> = {
 export function DashboardSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  // Session role comes from Better Auth as a plain string — narrow it so the
-  // role-keyed records below stay type-safe.
-  const role: Role = session?.user?.role === "admin" ? "admin" : "customer";
+  // The sidebar mirrors the page being viewed: /dashboard/admin shows the
+  // admin menu, /dashboard/customer shows the customer menu. Any other
+  // dashboard route falls back to the signed-in role (session role comes
+  // from Better Auth as a plain string — narrow it so the role-keyed
+  // records below stay type-safe).
+  const role: Role = pathname.startsWith("/dashboard/admin")
+    ? "admin"
+    : pathname.startsWith("/dashboard/customer")
+      ? "customer"
+      : session?.user?.role === "admin"
+        ? "admin"
+        : "customer";
   const heading = dashboardHeadingByRole[role];
 
   return (
