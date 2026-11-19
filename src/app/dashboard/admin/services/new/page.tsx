@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { createService } from "@/lib/actions/services";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -76,7 +77,7 @@ export default function AddServicePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.price || !formData.duration) {
@@ -84,52 +85,45 @@ export default function AddServicePage() {
       return;
     }
 
+    const servicePayload = {
+      name: formData.name.trim(),
+      category: formData.category,
+      price: Number(formData.price),
+      duration: Number(formData.duration),
+      image: formData.image.trim(),
+      description: formData.description.trim(),
+      location: formData.location,
+      specialist: formData.specialist.trim() || "Senior Stylist",
+    };
+
+    // Logs form data in browser console
+    console.log("New Salon Service Data:", servicePayload);
+
     setIsSubmitting(true);
 
-    try {
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    createService(servicePayload)
+      .then((result) => {
+        console.log("MongoDB Insert Result:", result);
+        setIsSubmitting(false);
 
-      const res = await fetch(`${apiUrl}/api/services`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          category: formData.category,
-          price: Number(formData.price),
-          duration: Number(formData.duration),
-          image: formData.image.trim(),
-          description: formData.description.trim(),
-          location: formData.location,
-          specialist: formData.specialist.trim() || "Senior Stylist",
-        }),
+        if (result.insertedId) {
+          toast.success("Salon service added successfully!");
+          setFormData(INITIAL_FORM);
+          router.push("/dashboard/services");
+          router.refresh();
+        } else {
+          toast.error("Service could not be saved.");
+        }
+      })
+      .catch((error) => {
+        console.log("Create Service Error:", error);
+        setIsSubmitting(false);
+        toast.error("Failed to add service. Check your backend server.");
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to add service");
-      }
-
-      toast.success("Salon service added successfully!");
-      setFormData(INITIAL_FORM);
-      router.push("/dashboard/services");
-      router.refresh();
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong"
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   return (
     <div className="flex min-h-[calc(100vh-6rem)] w-full flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      {/* <div className="w-full max-w-4xl space-y-5"> */}
       <div className="mx-auto w-full max-w-5xl space-y-5 py-4">
         <div className="flex items-center justify-between">
           <Link
