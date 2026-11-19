@@ -29,7 +29,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const NAV_LINKS = [
+type NavLink = { href: string; label: string };
+
+const PUBLIC_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Browse Services" },
 ];
@@ -67,9 +69,23 @@ export function Navbar() {
     }
   };
 
-  const navLinks = user
-    ? [...NAV_LINKS, { href: "/dashboard", label: "Dashboard" }]
-    : NAV_LINKS;
+  // Dashboard is always visible, signed in or not:
+  // - signed in  → straight to that user's role dashboard (/dashboard/customer | /dashboard/admin)
+  // - signed out → /dashboard, which server-redirects to /dashboard/customer
+  // The server route (src/app/dashboard/page.tsx) is the single source of
+  // truth for the role redirect, so the navbar can render before the session
+  // finishes loading without flashing the wrong link.
+  //
+  // TODO(project requirement): remove/comment out this main-nav Dashboard
+  // entry at the END of the project — only the dropdown Dashboard stays.
+  const dashboardHref = user
+    ? `/dashboard/${user.role || "customer"}`
+    : "/dashboard";
+
+  const navLinks: NavLink[] = [
+    ...PUBLIC_LINKS,
+    { href: dashboardHref, label: "Dashboard" },
+  ];
 
   const initials = user?.name
     ? user.name
@@ -142,7 +158,7 @@ export function Navbar() {
                 <DropdownMenuSeparator className="my-1" />
                 <DropdownMenuGroup>
                   <DropdownMenuItem 
-                    render={<Link href="/dashboard" />}
+                    render={<Link href={dashboardHref} />}
                     className="cursor-pointer gap-2.5 rounded-xl py-2.5 font-medium"
                   >
                     <LayoutDashboard className="size-4 text-muted-foreground" />
