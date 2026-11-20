@@ -93,7 +93,7 @@ export default function BrowseServicesPage() {
               THE SERVICE MENU
             </p>
             <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Find your next ritual
+              Explore Your Dreamy experience
             </h1>
             <p className="max-w-xl text-sm text-muted-foreground sm:text-base">
               Browse every active treatment at SalonBook. Search by name, filter

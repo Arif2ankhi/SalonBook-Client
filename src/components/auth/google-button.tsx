@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 /** Shared Google social sign-in button used on the sign-in and sign-up pages. */
 export function GoogleButton({ label = "Continue with Google" }: { label?: string }) {
   const handleGoogleSignIn = async () => {
-    const { error } = await authClient.signIn.social({
+    const { data, error } = await authClient.signIn.social({
       provider: "google",
+
       // Redirect to home for now; switch to /dashboard once it is built.
       callbackURL: "/",
     });
-
+    console.log(data, 'Google sign in');
     if (error) {
       toast.error("Google sign-in is not available right now. Please try again later.");
     }
