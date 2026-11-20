@@ -1,7 +1,7 @@
 
 /// 3rd codes 
 
-import { API_BASE_URL } from "../api/config";
+import { API_BASE_URL, readJsonResponse } from "../api/config";
 
 export interface SalonService {
   _id: string;
@@ -37,11 +37,7 @@ export const getServices = async (): Promise<SalonService[]> => {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch services");
-  }
-
-  return res.json();
+  return readJsonResponse<SalonService[]>(res, "Failed to fetch services");
 };
 
 // Public Browse Services-Only Active service
@@ -50,11 +46,7 @@ export const getActiveServices = async (): Promise<SalonService[]> => {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch active services");
-  }
-
-  return res.json();
+  return readJsonResponse<SalonService[]>(res, "Failed to fetch active services");
 };
 
 // Service Details - Single service by id
@@ -63,11 +55,9 @@ export const getServiceById = async (id: string): Promise<SalonService> => {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch service details");
-  }
-
-  return res.json();
+  // Throws ApiError(…, 404) for unknown ids so the page can notFound(),
+  // and ApiError(…, 5xx) for backend failures so error.tsx can take over.
+  return readJsonResponse<SalonService>(res, "Failed to fetch service details");
 };
 
 export const createService = async (data: NewServicePayload) => {
@@ -84,11 +74,10 @@ export const createService = async (data: NewServicePayload) => {
     }),
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to create service");
-  }
-
-  return res.json();
+  return readJsonResponse<{ insertedId?: string; acknowledged?: boolean }>(
+    res,
+    "Failed to create service"
+  );
 };
 
 export const updateService = async (
@@ -103,11 +92,7 @@ export const updateService = async (
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to update service");
-  }
-
-  return res.json();
+  return readJsonResponse(res, "Failed to update service");
 };
 
 export const deleteService = async (id: string) => {
@@ -115,11 +100,7 @@ export const deleteService = async (id: string) => {
     method: "DELETE",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to delete service");
-  }
-
-  return res.json();
+  return readJsonResponse(res, "Failed to delete service");
 };
 
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, Search, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 import { getActiveServices, type SalonService } from "@/lib/actions/services";
 // import { ServiceCard } from "@/components/services/service-card";
@@ -54,6 +55,8 @@ export default function BrowseServicesPage() {
         console.log("Error fetching services:", err);
         setErrorMessage("Could not load services. Please check your server.");
         setIsLoading(false);
+        // Toast + inline banner both surface the failed API request.
+        toast.error("Failed to fetch services from the server.");
       });
   }, []);
 

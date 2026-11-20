@@ -25,8 +25,6 @@ const SignInPage = () => {
     const email = String(form.get("email"));
     const password = String(form.get("password"));
 
-    console.log("Sign in form values:", { email, password });
-
     setIsSubmitting(true);
     // NOTE: deliberately no `callbackURL` here. When one is sent, Better Auth
     // answers with `redirect: true` and its redirect plugin hard-navigates

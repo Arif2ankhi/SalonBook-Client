@@ -221,7 +221,7 @@ import { useRouter } from "next/navigation";
 import { Calendar, Clock, CheckCircle2, Loader2, ShieldAlert } from "lucide-react";
 import { toast } from "sonner"; // or "react-hot-toast" depending on which toast package you installed
 import { SalonService } from "@/lib/actions/services";
-import { API_BASE_URL } from "@/lib/api/config";
+import { API_BASE_URL, ApiError, readJsonResponse } from "@/lib/api/config";
 import { useSession } from "@/lib/auth-client";
 
 const TIME_SLOTS = [
@@ -256,7 +256,8 @@ export default function BookingWidget({ service }: BookingWidgetProps) {
     e.preventDefault();
 
     if (!user) {
-      router.push(`/login?callbackUrl=/services/${service._id}`);
+      // Route exists as (auth)/sign-in — the old /login path was a dead link.
+      router.push("/sign-in");
       return;
     }
 
@@ -287,17 +288,29 @@ export default function BookingWidget({ service }: BookingWidgetProps) {
         }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message || "Failed to request appointment.");
-        return;
-      }
+      // Throws ApiError carrying the HTTP status + server message.
+      await readJsonResponse(res, "Failed to request appointment.");
 
       toast.success("Appointment request submitted! Status: Pending.");
       router.push("/dashboard/customer/appointments");
-    } catch {
-      toast.error("Network error. Please try again.");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.status === 409) {
+          // Booking conflict: slot taken between load and submit.
+          toast.error(
+            err.message ||
+              "That time slot has just been booked. Please pick another slot."
+          );
+          setTimeSlot("");
+        } else if (err.status === 401 || err.status === 403) {
+          toast.error("Your session has expired. Please sign in again.");
+          router.push("/sign-in");
+        } else {
+          toast.error(err.message || "Failed to request appointment.");
+        }
+      } else {
+        toast.error("Network error. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -386,6 +399,11 @@ export default function BookingWidget({ service }: BookingWidgetProps) {
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Submitting...
+              </>
+            ) : isPending ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Checking your session...
               </>
             ) : !user ? (
               "Sign In to Request Appointment"

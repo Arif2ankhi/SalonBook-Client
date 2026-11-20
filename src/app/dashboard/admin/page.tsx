@@ -24,6 +24,7 @@ import {
 } from "@/lib/actions/appointments";
 import StatCard from "@/app/components/shared/StatCard";
 import StatusBadge from "@/app/components/shared/StatusBadge";
+import RoleGate from "@/app/components/RoleGate";
 // import StatCard from "@/components/shared/StatCard";
 // import StatusBadge from "@/components/shared/StatusBadge";
 
@@ -51,6 +52,14 @@ function formatCreatedAt(isoStr: string) {
 }
 
 export default function AdminOverviewPage() {
+  return (
+    <RoleGate role="admin">
+      <AdminOverviewContent />
+    </RoleGate>
+  );
+}
+
+function AdminOverviewContent() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [services, setServices] = useState<SalonService[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);

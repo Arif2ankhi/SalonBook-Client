@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, MapPin, ShieldCheck, Sparkles, UserCheck } from "lucide-react";
-import { getServiceById } from "@/lib/actions/services";
+import { getServiceById, type SalonService } from "@/lib/actions/services";
+import { ApiError } from "@/lib/api/config";
 import BookingWidget from "@/components/services/BookingWidget";
 // import BookingWidget from "@/components/services/BookingWidget";
 
@@ -12,7 +13,18 @@ interface ServiceDetailsPageProps {
 
 export default async function ServiceDetailsPage({ params }: ServiceDetailsPageProps) {
   const { id } = await params;
-  const service = await getServiceById(id);
+
+  let service: SalonService;
+  try {
+    service = await getServiceById(id);
+  } catch (err) {
+    // Unknown id → styled 404 page. Any other API failure (backend down,
+    // 5xx) bubbles to the root error boundary instead of a blank screen.
+    if (err instanceof ApiError && err.status === 404) {
+      notFound();
+    }
+    throw err;
+  }
 
   if (!service) {
     notFound();

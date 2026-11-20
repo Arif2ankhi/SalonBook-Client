@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner"; // Swap to "react-hot-toast" if using react-hot-toast
 import { authClient, useSession } from "@/lib/auth-client";
 import { getUserProfile, updateUserProfile } from "@/lib/actions/users";
+import { ApiError } from "@/lib/api/config";
 import { uploadImageToImgBB } from "@/lib/utils/uploadImage";
 
 interface ProfileFormProps {
@@ -75,7 +76,15 @@ export default function ProfileForm({
         setRole(profile.role || "customer");
         setIsBlocked(Boolean(profile.isBlocked));
         setCreatedAt(profile.createdAt || null);
-      } catch {
+      } catch (err) {
+        // Fall back to session info so the form stays usable, but tell the
+        // user their saved details couldn't be fetched (failed API request).
+        // A plain 404 just means no profile row exists yet — that's normal.
+        if (!(err instanceof ApiError) || err.status !== 404) {
+          toast.error(
+            "Could not load your saved profile details. Showing your account info instead."
+          );
+        }
         setName(session?.user?.name || "");
         setImage(session?.user?.image || "");
       } finally {

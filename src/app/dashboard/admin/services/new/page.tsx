@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import RoleGate from "@/app/components/RoleGate";
 
 const SERVICE_CATEGORIES = [
   "Haircut & Styling",
@@ -66,6 +67,14 @@ const INITIAL_FORM: ServiceFormData = {
 };
 
 export default function AddServicePage() {
+  return (
+    <RoleGate role="admin">
+      <AddServiceContent />
+    </RoleGate>
+  );
+}
+
+function AddServiceContent() {
   const router = useRouter();
   const [formData, setFormData] = useState<ServiceFormData>(INITIAL_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,7 +118,7 @@ export default function AddServicePage() {
         if (result.insertedId) {
           toast.success("Salon service added successfully!");
           setFormData(INITIAL_FORM);
-          router.push("/dashboard/services");
+          router.push("/dashboard/admin/services");
           router.refresh();
         } else {
           toast.error("Service could not be saved.");
@@ -127,7 +136,7 @@ export default function AddServicePage() {
       <div className="mx-auto w-full max-w-5xl space-y-5 py-4">
         <div className="flex items-center justify-between">
           <Link
-            href="/dashboard/services"
+            href="/dashboard/admin/services"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
           >
             <ArrowLeft className="mr-2 size-4" />

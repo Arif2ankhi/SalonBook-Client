@@ -17,9 +17,17 @@ import { auth } from "@/lib/auth";
  * The redirect lives on the server so it works before any client JS hydrates.
  */
 export default async function DashboardIndexPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // If the session lookup itself fails (DB hiccup, Better Auth outage),
+  // fall back to the signed-out behaviour instead of crashing into the
+  // error boundary: the customer dashboard is publicly reachable anyway.
+  let session: Awaited<ReturnType<typeof auth.api.getSession>> = null;
+  try {
+    session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  } catch {
+    session = null;
+  }
 
   const role =
     (session?.user as { role?: "customer" | "admin" } | undefined)?.role ??

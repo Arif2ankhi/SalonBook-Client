@@ -50,6 +50,17 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import RoleGate from "@/app/components/RoleGate";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const SERVICE_CATEGORIES = [
   "Haircut & Styling",
@@ -93,6 +104,14 @@ function formatCreatedDate(dateString?: string): string {
 }
 
 export default function ManageServicesPage() {
+  return (
+    <RoleGate role="admin">
+      <ManageServicesContent />
+    </RoleGate>
+  );
+}
+
+function ManageServicesContent() {
   const [services, setServices] = useState<SalonService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -116,6 +135,10 @@ export default function ManageServicesPage() {
 
   // Busy row tracker for status toggle / delete
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  // Pending delete target — drives the confirmation AlertDialog
+  // (replaces the old native window.confirm).
+  const [deleteTarget, setDeleteTarget] = useState<SalonService | null>(null);
 
   const loadServices = () => {
     // isLoading already starts as true, so no need to set it here —
@@ -184,12 +207,20 @@ export default function ManageServicesPage() {
       return;
     }
 
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be up to 5 MB.");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
         setEditForm((prev) => ({ ...prev, image: reader.result as string }));
         toast.success("New image selected.");
       }
+    };
+    reader.onerror = () => {
+      toast.error("Could not read the selected image file. Please try another one.");
     };
     reader.readAsDataURL(file);
   };
@@ -286,12 +317,16 @@ export default function ManageServicesPage() {
       });
   };
 
-  // Delete Service
+  // Delete Service — opens the confirmation dialog (no native window.confirm)
   const handleDelete = (service: SalonService) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${service.name}"? This cannot be undone.`
-    );
-    if (!confirmed) return;
+    setDeleteTarget(service);
+  };
+
+  // Runs when the user confirms inside the AlertDialog
+  const confirmDelete = () => {
+    const service = deleteTarget;
+    if (!service) return;
+    setDeleteTarget(null);
 
     setBusyId(service._id);
 
@@ -722,6 +757,34 @@ export default function ManageServicesPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Service Confirmation (AlertDialog — no browser confirm) */}
+      <AlertDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this service?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget
+                ? `"${deleteTarget.name}" will be permanently removed from the salon menu. This cannot be undone.`
+                : "This service will be permanently removed."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              Delete service
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

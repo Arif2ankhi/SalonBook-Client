@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../api/config";
+import { API_BASE_URL, readJsonResponse } from "../api/config";
 
 export interface Appointment {
   _id: string;
@@ -28,11 +28,10 @@ export const getCustomerAppointments = async (
     { cache: "no-store" }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch appointments");
-  }
-
-  return res.json();
+  return readJsonResponse<Appointment[]>(
+    res,
+    "Failed to fetch appointments"
+  );
 };
 
 // Admin: fetch all appointment requests
@@ -41,11 +40,10 @@ export const getAllAppointments = async (): Promise<Appointment[]> => {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch all appointments");
-  }
-
-  return res.json();
+  return readJsonResponse<Appointment[]>(
+    res,
+    "Failed to fetch all appointments"
+  );
 };
 
 // Update status (Customer cancels Pending; Admin Confirms or Cancels)
@@ -59,9 +57,5 @@ export const updateAppointmentStatus = async (
     body: JSON.stringify({ status }),
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to update appointment status");
-  }
-
-  return res.json();
+  return readJsonResponse(res, "Failed to update appointment status");
 };

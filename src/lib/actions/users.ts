@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../api/config";
+import { API_BASE_URL, readJsonResponse } from "../api/config";
 
 export interface UserProfile {
   _id: string;
@@ -24,11 +24,7 @@ export const getAllUsers = async (): Promise<UserProfile[]> => {
     cache: "no-store",
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch users");
-  }
-
-  return res.json();
+  return readJsonResponse<UserProfile[]>(res, "Failed to fetch users");
 };
 
 export const getUserProfile = async (email: string): Promise<UserProfile> => {
@@ -37,11 +33,7 @@ export const getUserProfile = async (email: string): Promise<UserProfile> => {
     { cache: "no-store" }
   );
 
-  if (!res.ok) {
-    throw new Error("Failed to load profile");
-  }
-
-  return res.json();
+  return readJsonResponse<UserProfile>(res, "Failed to load profile");
 };
 
 export const updateUserProfile = async (payload: UpdateProfilePayload) => {
@@ -51,11 +43,7 @@ export const updateUserProfile = async (payload: UpdateProfilePayload) => {
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to update profile");
-  }
-
-  return data;
+  // readJsonResponse checks res.ok BEFORE trusting the body and surfaces the
+  // server's validation message (e.g. unauthorized requester) via ApiError.
+  return readJsonResponse(res, "Failed to update profile");
 };

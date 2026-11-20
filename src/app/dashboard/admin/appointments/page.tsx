@@ -18,6 +18,7 @@ import {
   updateAppointmentStatus,
 } from "@/lib/actions/appointments";
 import StatusBadge from "@/app/components/shared/StatusBadge";
+import RoleGate from "@/app/components/RoleGate";
 // import StatusBadge from "@/components/shared/StatusBadge";
 
 type StatusFilter = "All" | "Pending" | "Confirmed" | "Cancelled";
@@ -46,6 +47,14 @@ function formatRequestedDate(isoStr: string) {
 }
 
 export default function AdminAppointmentsPage() {
+  return (
+    <RoleGate role="admin">
+      <AdminAppointmentsContent />
+    </RoleGate>
+  );
+}
+
+function AdminAppointmentsContent() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
