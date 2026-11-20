@@ -8,6 +8,7 @@ export interface UserProfile {
   phone: string;
   role: "customer" | "admin";
   isBlocked?: boolean;
+  createdAt?: string | null;
 }
 
 export interface UpdateProfilePayload {
