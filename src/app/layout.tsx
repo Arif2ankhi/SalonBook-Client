@@ -6,6 +6,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
 import "./globals.css";
+import { ThemeProvider } from "./components/providers/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,21 +32,46 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
+  lang="en"
+  suppressHydrationWarning
+  className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
+>
+  <body className="flex min-h-full flex-col">
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem={false}
+      disableTransitionOnChange
     >
-      <body suppressHydrationWarning className="flex min-h-full flex-col">
-        <Navbar />
-        <main className="flex flex-1 flex-col">{children}</main>
-        <Footer />
-        <Toaster
-          richColors
-          position="top-right"
-          duration={5000}
-          closeButton
-          toastOptions={{ style: { fontSize: "15px" } }}
-        />
-      </body>
-    </html>
+      <Navbar />
+      <main className="flex flex-1 flex-col">{children}</main>
+      <Footer />
+      <Toaster
+        richColors
+        position="top-right"
+        duration={5000}
+        closeButton
+        toastOptions={{ style: { fontSize: "15px" } }}
+      />
+    </ThemeProvider>
+  </body>
+</html>
+    // <html
+    //   lang="en" suppressHydrationWarning
+    //   className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
+    // >
+    //   <body  className="flex min-h-full flex-col">
+    //     <Navbar />
+    //     <main className="flex flex-1 flex-col">{children}</main>
+    //     <Footer />
+    //     <Toaster
+    //       richColors
+    //       position="top-right"
+    //       duration={5000}
+    //       closeButton
+    //       toastOptions={{ style: { fontSize: "15px" } }}
+    //     />
+    //   </body>
+    // </html>
   );
 }

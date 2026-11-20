@@ -10,6 +10,7 @@ export interface Appointment {
   customerId: string;
   customerName: string;
   customerEmail: string;
+  customerImage?: string;
   appointmentDate: string;
   timeSlot: string;
   message?: string;

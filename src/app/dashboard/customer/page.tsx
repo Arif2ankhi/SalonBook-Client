@@ -1,14 +1,4 @@
-// import React from 'react';
 
-// const CustomerDashboardPage = () => {
-//     return (
-//         <div>
-//             <h2>Customer Dashboard Page</h2>
-//         </div>
-//     );
-// };
-
-// export default CustomerDashboardPage;
 "use client";
 
 import { useEffect, useState } from "react";
@@ -29,8 +19,9 @@ import {
   Appointment,
   getCustomerAppointments,
 } from "@/lib/actions/appointments";
-import StatCard from "@/components/shared/StatCard";
-import StatusBadge from "@/components/shared/StatusBadge";
+import StatCard from "@/app/components/shared/StatCard";
+import StatusBadge from "@/app/components/shared/StatusBadge";
+
 
 export default function CustomerOverviewPage() {
   const { data: session, isPending: isSessionLoading } = useSession();

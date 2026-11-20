@@ -28,6 +28,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import ThemeToggle from "@/app/components/shared/ThemeToggled";
 
 type NavLink = { href: string; label: string };
 
@@ -52,11 +53,7 @@ export function Navbar() {
       fetchOptions: {
         onSuccess: () => {
           toast.success("User signout successfully");
-          // Refresh server components instead of doing a full page load —
-          // a hard navigation would destroy the <Toaster> and the toast
-          // would vanish before the user could read it. Better Auth clears
-          // its own session cache on /sign-out, so the navbar re-renders
-          // to the signed-out state right away.
+         router.push("/sign-in");
           router.refresh();
         },
         onError: (ctx) => {
@@ -117,7 +114,11 @@ export function Navbar() {
           ))}
         </nav>
 
+        
+
         <div className="flex items-center gap-3">
+          <ThemeToggle/>
+
           {user && (
             <span className="hidden text-sm font-medium text-muted-foreground lg:inline">
               Welcome, <span className="font-semibold text-foreground">{user.name}</span>

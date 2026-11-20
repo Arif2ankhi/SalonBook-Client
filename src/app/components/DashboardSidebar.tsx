@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,6 +7,7 @@ import {
   LayoutDashboard,
   Plus,
   Scissors,
+  Sparkles,
   UserRound,
   Users,
   type LucideIcon,
@@ -20,24 +20,19 @@ import {
   SidebarHeader,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenu
+  SidebarMenu,
 } from "@/components/ui/sidebar";
 import { useSession } from "@/lib/auth-client";
 
 type Role = "customer" | "admin";
 
 interface MenuItem {
-  /** Stable React key. */
   id: string;
-  /** Label rendered next to the icon. */
   name: string;
-  /** Route this item points at. */
   url: string;
-  /** Lucide icon component. */
   icon: LucideIcon;
 }
 
-/** Sidebar links per role — mirrors the customer / admin dashboard mockups. */
 const menuItemsByRole: Record<Role, MenuItem[]> = {
   customer: [
     { id: "overview", name: "Overview", url: "/dashboard/customer", icon: LayoutDashboard },
@@ -56,7 +51,6 @@ const menuItemsByRole: Record<Role, MenuItem[]> = {
   ],
 };
 
-/** Eyebrow + heading shown in the sidebar header for each role. */
 const dashboardHeadingByRole: Record<Role, { label: string; title: string }> = {
   customer: { label: "Your salon", title: "Customer dashboard" },
   admin: { label: "Salon studio", title: "Admin dashboard" },
@@ -65,11 +59,6 @@ const dashboardHeadingByRole: Record<Role, { label: string; title: string }> = {
 export function DashboardSidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  // The sidebar mirrors the page being viewed: /dashboard/admin shows the
-  // admin menu, /dashboard/customer shows the customer menu. Any other
-  // dashboard route falls back to the signed-in role (session role comes
-  // from Better Auth as a plain string — narrow it so the role-keyed
-  // records below stay type-safe).
   const role: Role = pathname.startsWith("/dashboard/admin")
     ? "admin"
     : pathname.startsWith("/dashboard/customer")
@@ -81,8 +70,21 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
-        <div className="px-2 py-1">
+      <SidebarHeader className="px-4 pt-5 pb-3">
+        {/* SalonBook Logo */}
+        <Link href="/" className="flex items-center gap-2.5 px-1">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-accent text-primary">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <span className="font-heading text-lg font-bold tracking-tight text-sidebar-foreground">
+            Salon<span className="text-primary">Book</span>
+          </span>
+        </Link>
+
+        <div className="my-3 border-t border-sidebar-border" />
+
+        {/* Role Eyebrow + Heading */}
+        <div className="px-1">
           <p className="text-[11px] font-semibold tracking-widest text-primary uppercase">
             {heading.label}
           </p>
@@ -91,9 +93,8 @@ export function DashboardSidebar() {
           </p>
         </div>
       </SidebarHeader>
+
       <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
         <SidebarGroup>
           <SidebarMenu>
             {menuItemsByRole[role].map((item) => (
