@@ -6,7 +6,7 @@ SalonBook is a full-stack, role-based salon service and appointment booking web 
 
 ## 🌐 Live Demo & Repositories
 
-- **Live Client:** https://salonbook-client-gules.vercel.app
+- **Live Client Link:** https://salonbook-client-gules.vercel.app
 - **Live API Server:** https://salonbook-server-sigma.vercel.app
 - **Client Repository:** https://github.com/Arif2ankhi/SalonBook-Client
 - **Server Repository:** https://github.com/Arif2ankhi/salonbook-server
