@@ -51,7 +51,7 @@ export function FeaturedServices() {
               Handpicked for you
             </p>
             <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Featured salon services
+              Featured Salon Services
             </h2>
             <p className="max-w-xl text-sm text-muted-foreground sm:text-base">
               Our most-loved treatments, freshly updated from the salon menu —

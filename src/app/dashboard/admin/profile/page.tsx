@@ -1,5 +1,3 @@
-
-
 import ProfileForm from "@/app/components/shared/ProfileForm";
 import RoleGate from "@/app/components/RoleGate";
 

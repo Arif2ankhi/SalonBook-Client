@@ -32,16 +32,13 @@ export default function CustomerOverviewPage() {
   const firstName = session?.user?.name?.split(" ")[0] || "Guest";
 
   useEffect(() => {
-    if (isSessionLoading) return;
-
-    if (!userEmail) {
-      setIsLoading(false);
-      return;
-    }
+    // Signed-out visitors have nothing to fetch — `showLoader` below skips
+    // the spinner instead of calling setState inside the effect.
+    if (isSessionLoading || !userEmail) return;
 
     const loadData = async () => {
       try {
-        setIsLoading(true);
+        // isLoading already starts as true, so no need to set it here.
         const data = await getCustomerAppointments(userEmail);
         setAppointments(data);
       } catch {
@@ -63,7 +60,11 @@ export default function CustomerOverviewPage() {
   // Latest 4 requests for the Recent Appointments panel
   const recentAppointments = appointments.slice(0, 4);
 
-  if (isSessionLoading || isLoading) {
+  // Loader only while the session is resolving or a signed-in user's data
+  // is loading (signed-out visitors never fetch, so isLoading stays true).
+  const showLoader = isSessionLoading || (isLoading && Boolean(userEmail));
+
+  if (showLoader) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-[#4A2535]" />

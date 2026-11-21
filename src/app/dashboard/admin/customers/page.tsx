@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -51,29 +51,31 @@ export default function AdminCustomersPage() {
     useState<UserProfile | null>(null);
   const [statusTarget, setStatusTarget] = useState<UserProfile | null>(null);
 
-  const loadDirectory = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const [allUsers, allAppointments] = await Promise.all([
-        getAllUsers(),
-        getAllAppointments(),
-      ]);
-      // Show registered customers (exclude admin accounts)
-      const registeredCustomers = allUsers.filter(
-        (u) => (u.role || "customer") !== "admin"
-      );
-      setCustomers(registeredCustomers);
-      setAppointments(allAppointments);
-    } catch {
-      toast.error("Failed to load customer directory.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
+    // Loaded once on mount. Defined inside the effect (like the other
+    // dashboard pages) so no setState runs while the effect body executes.
+    const loadDirectory = async () => {
+      try {
+        // isLoading already starts as true, so no need to set it here.
+        const [allUsers, allAppointments] = await Promise.all([
+          getAllUsers(),
+          getAllAppointments(),
+        ]);
+        // Show registered customers (exclude admin accounts)
+        const registeredCustomers = allUsers.filter(
+          (u) => (u.role || "customer") !== "admin"
+        );
+        setCustomers(registeredCustomers);
+        setAppointments(allAppointments);
+      } catch {
+        toast.error("Failed to load customer directory.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadDirectory();
-  }, [loadDirectory]);
+  }, []);
 
   const getCustomerAppointments = (email: string) =>
     appointments.filter((appt) => appt.customerEmail === email);

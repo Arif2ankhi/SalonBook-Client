@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Check,
@@ -65,21 +65,23 @@ function AdminAppointmentsContent() {
   const [detailsTarget, setDetailsTarget] = useState<Appointment | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Appointment | null>(null);
 
-  const loadAppointments = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await getAllAppointments();
-      setAppointments(data);
-    } catch {
-      toast.error("Failed to load appointment requests.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
+    // Loaded once on mount. Defined inside the effect (like the other
+    // dashboard pages) so no setState runs while the effect body executes.
+    const loadAppointments = async () => {
+      try {
+        // isLoading already starts as true, so no need to set it here.
+        const data = await getAllAppointments();
+        setAppointments(data);
+      } catch {
+        toast.error("Failed to load appointment requests.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadAppointments();
-  }, [loadAppointments]);
+  }, []);
 
   const filteredAppointments = appointments.filter((appt) => {
     const matchesStatus =

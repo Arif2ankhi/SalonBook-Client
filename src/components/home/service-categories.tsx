@@ -79,7 +79,7 @@ export function ServiceCategories() {
             Browse the menu
           </p>
           <h2 className="font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Salon service categories
+            Salon Service Categories
           </h2>
           <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
             Jump straight to the treatments you are in the mood for — every

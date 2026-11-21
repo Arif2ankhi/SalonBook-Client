@@ -60,15 +60,13 @@ export default function ProfileForm({
   const userEmail = session?.user?.email;
 
   useEffect(() => {
-    if (isSessionLoading) return;
-    if (!userEmail) {
-      setIsLoading(false);
-      return;
-    }
+    // Signed-out visitors have nothing to fetch — `showLoader` below skips
+    // the spinner instead of calling setState inside the effect.
+    if (isSessionLoading || !userEmail) return;
 
     const loadProfile = async () => {
       try {
-        setIsLoading(true);
+        // isLoading already starts as true, so no need to set it here.
         const profile = await getUserProfile(userEmail);
         setName(profile.name || session?.user?.name || "");
         setImage(profile.image || session?.user?.image || "");
@@ -174,7 +172,11 @@ export default function ProfileForm({
     }
   };
 
-  if (isSessionLoading || isLoading) {
+  // Loader only while the session is resolving or a signed-in user's data
+  // is loading (signed-out visitors never fetch, so isLoading stays true).
+  const showLoader = isSessionLoading || (isLoading && Boolean(userEmail));
+
+  if (showLoader) {
     return (
       <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-[#4A2535]" />

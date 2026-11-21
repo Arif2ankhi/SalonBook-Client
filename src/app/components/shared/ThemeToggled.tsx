@@ -1,17 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+// Hydration-safe "mounted" detection without setState-in-effect:
+// server snapshot → false (matches SSR HTML), client snapshot → true.
+const emptySubscribe = () => () => {};
+const getMounted = () => true;
+const getServerMounted = () => false;
+
 export default function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch until client mounts
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    getMounted,
+    getServerMounted
+  );
 
   if (!mounted) {
     return (
