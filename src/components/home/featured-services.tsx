@@ -42,7 +42,9 @@ export function FeaturedServices() {
   }, []);
 
   return (
-    <section className="w-full">
+    // Stable section anchor (also used by the standalone /features route).
+    // `scroll-mt-16` keeps the sticky h-16 header from covering the heading.
+    <section id="features" className="w-full scroll-mt-16">
       <div className="mx-auto w-full max-w-7xl space-y-8 px-4 py-14 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">

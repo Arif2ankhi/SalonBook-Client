@@ -35,6 +35,8 @@ type NavLink = { href: string; label: string };
 const PUBLIC_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Browse Services" },
+  // "Featured Salon Services" — its own route at src/app/features/page.tsx.
+  { href: "/features", label: "Features" },
 ];
 
 export function Navbar() {
@@ -66,23 +68,21 @@ export function Navbar() {
     }
   };
 
-  // Dashboard is always visible, signed in or not:
+  // Dashboard lives ONLY in the avatar dropdown (project requirement) — the
+  // main-nav entry next to "Browse Services" has been removed, so `navLinks`
+  // is just the public links (Home / Browse Services / Features).
+  //
+  // The dropdown still needs its target:
   // - signed in  → straight to that user's role dashboard (/dashboard/customer | /dashboard/admin)
   // - signed out → /dashboard, which server-redirects to /dashboard/customer
   // The server route (src/app/dashboard/page.tsx) is the single source of
   // truth for the role redirect, so the navbar can render before the session
   // finishes loading without flashing the wrong link.
-  //
-  // TODO(project requirement): remove/comment out this main-nav Dashboard
-  // entry at the END of the project — only the dropdown Dashboard stays.
   const dashboardHref = user
     ? `/dashboard/${user.role || "customer"}`
     : "/dashboard";
 
-  const navLinks: NavLink[] = [
-    ...PUBLIC_LINKS,
-    { href: dashboardHref, label: "Dashboard" },
-  ];
+  const navLinks: NavLink[] = PUBLIC_LINKS;
 
   const initials = user?.name
     ? user.name

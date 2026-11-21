@@ -51,7 +51,7 @@ const SignUpPage = () => {
       name,
       email,
       password,
-      role: "customer",
+      // role: "customer",
       ...(image ? { image } : {}),
     } as Parameters<typeof authClient.signUp.email>[0]);
     setIsSubmitting(false);

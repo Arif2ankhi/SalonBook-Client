@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
@@ -13,8 +13,11 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const SignInPage = () => {
+const SignInForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -38,12 +41,9 @@ const SignInPage = () => {
 
     if (data) {
       toast.success("Signed in successfully");
-      // Redirect to home for now; switch to /dashboard once it is built.
-      // Client-side navigation keeps the toast alive on the next page.
-      router.push("/");
+      router.push(callbackUrl);
     }
     if (error) {
-    
       toast.error("Invalid email or password");
       console.error("Sign in error:", error);
     }
@@ -126,4 +126,16 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default function SignInPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="rounded-xl border bg-card p-8 text-center text-sm text-muted-foreground">
+          Loading...
+        </div>
+      }
+    >
+      <SignInForm />
+    </Suspense>
+  );
+}
