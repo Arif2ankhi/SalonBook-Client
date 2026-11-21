@@ -1,4 +1,75 @@
+// import { API_BASE_URL, readJsonResponse } from "../api/config";
+
+// export interface UserProfile {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   image: string;
+//   phone: string;
+//   role: "customer" | "admin";
+//   isBlocked?: boolean;
+//   createdAt?: string | null;
+// }
+
+// export interface UpdateProfilePayload {
+//   email: string;
+//   requesterEmail: string;
+//   name: string;
+//   image: string;
+//   phone: string;
+// }
+
+// export const getAllUsers = async (): Promise<UserProfile[]> => {
+//   const res = await fetch(`${API_BASE_URL}/users`, {
+//     cache: "no-store",
+//   });
+
+//   return readJsonResponse<UserProfile[]>(res, "Failed to fetch users");
+// };
+
+// export const getUserProfile = async (email: string): Promise<UserProfile> => {
+//   const res = await fetch(
+//     `${API_BASE_URL}/users/profile?email=${encodeURIComponent(email)}`,
+//     { cache: "no-store" }
+//   );
+
+//   return readJsonResponse<UserProfile>(res, "Failed to load profile");
+// };
+
+// export const updateUserProfile = async (payload: UpdateProfilePayload) => {
+//   const res = await fetch(`${API_BASE_URL}/users/profile`, {
+//     method: "PATCH",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(payload),
+//   });
+
+//   // readJsonResponse checks res.ok BEFORE trusting the body and surfaces the
+//   // server's validation message (e.g. unauthorized requester) via ApiError.
+//   return readJsonResponse(res, "Failed to update profile");
+// };
+
+// //Togglr block unblock in admin customer route 
+
+// export const toggleUserBlockStatus = async (
+//   id: string,
+//   isBlocked: boolean
+// ) => {
+//   const res = await fetch(`${API_BASE_URL}/users/${id}/status`, {
+//     method: "PATCH",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ isBlocked }),
+//   });
+
+//   const data = await res.json();
+
+//   if (!res.ok) {
+//     throw new Error(data.message || "Failed to update account status");
+//   }
+//   return data;
+// };
+
 import { API_BASE_URL, readJsonResponse } from "../api/config";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 export interface UserProfile {
   _id: string;
@@ -19,44 +90,66 @@ export interface UpdateProfilePayload {
   phone: string;
 }
 
+// Admin: Get all users (Protected with JWT + verifyAdmin)
 export const getAllUsers = async (): Promise<UserProfile[]> => {
+  const token = await getTokenFromClient();
+
   const res = await fetch(`${API_BASE_URL}/users`, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
     cache: "no-store",
   });
 
   return readJsonResponse<UserProfile[]>(res, "Failed to fetch users");
 };
 
+// Customer & Admin: Get single user profile (Protected with JWT)
 export const getUserProfile = async (email: string): Promise<UserProfile> => {
+  const token = await getTokenFromClient();
+
   const res = await fetch(
     `${API_BASE_URL}/users/profile?email=${encodeURIComponent(email)}`,
-    { cache: "no-store" }
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    }
   );
 
   return readJsonResponse<UserProfile>(res, "Failed to load profile");
 };
 
+// Customer & Admin: Update own profile (Protected with JWT)
 export const updateUserProfile = async (payload: UpdateProfilePayload) => {
+  const token = await getTokenFromClient();
+
   const res = await fetch(`${API_BASE_URL}/users/profile`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(payload),
   });
 
-  // readJsonResponse checks res.ok BEFORE trusting the body and surfaces the
-  // server's validation message (e.g. unauthorized requester) via ApiError.
   return readJsonResponse(res, "Failed to update profile");
 };
 
-//Togglr block unblock in admin customer route 
-
+// Admin: Toggle block/unblock customer account (Protected with JWT + verifyAdmin)
 export const toggleUserBlockStatus = async (
   id: string,
   isBlocked: boolean
 ) => {
+  const token = await getTokenFromClient();
+
   const res = await fetch(`${API_BASE_URL}/users/${id}/status`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ isBlocked }),
   });
 

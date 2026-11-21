@@ -15,7 +15,8 @@ import {
   VerifiedPaymentResponse,
   verifyStripePayment,
 } from "@/lib/actions/payments";
-import StatusBadge from "@/components/shared/StatusBadge";
+import StatusBadge from "@/app/components/shared/StatusBadge";
+
 
 function formatLongDate(dateStr?: string) {
   if (!dateStr) return "—";

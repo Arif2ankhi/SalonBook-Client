@@ -10,6 +10,7 @@ import { SalonService } from "@/lib/actions/services";
 import { API_BASE_URL, ApiError, readJsonResponse } from "@/lib/api/config";
 import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const TIME_SLOTS = [
   "09:30 AM",
@@ -55,9 +56,13 @@ export default function BookingWidget({ service }: BookingWidgetProps) {
 
     try {
       setIsSubmitting(true);
+      const token = await getTokenFromClient();
+
       const res = await fetch(`${API_BASE_URL}/appointments`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,
+          authorization: `Bearer ${token}`,
+        },
         credentials: "include",
         body: JSON.stringify({
           serviceId: service._id,
@@ -201,30 +206,6 @@ export default function BookingWidget({ service }: BookingWidgetProps) {
     </>
   )}
 </Button>
-          {/* <button
-            type="submit"
-            disabled={isSubmitting || isPending}
-            className="btn btn-primary w-full font-semibold"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                Submitting...
-              </>
-            ) : isPending ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                Checking your session...
-              </>
-            ) : !user ? (
-              "Sign In to Request Appointment"
-            ) : (
-              <>
-                <CheckCircle2 className="h-5 w-5" />
-                Request Appointment
-              </>
-            )}
-          </button> */}
         </form>
       )}
     </div>
