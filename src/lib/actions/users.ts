@@ -47,3 +47,24 @@ export const updateUserProfile = async (payload: UpdateProfilePayload) => {
   // server's validation message (e.g. unauthorized requester) via ApiError.
   return readJsonResponse(res, "Failed to update profile");
 };
+
+//Togglr block unblock in admin customer route 
+
+export const toggleUserBlockStatus = async (
+  id: string,
+  isBlocked: boolean
+) => {
+  const res = await fetch(`${API_BASE_URL}/users/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isBlocked }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to update account status");
+  }
+
+  return data;
+};

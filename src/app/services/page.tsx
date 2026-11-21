@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Loader2, Search, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,13 +31,34 @@ const SERVICE_CATEGORIES = [
 type SortOption = "default" | "price-asc" | "price-desc";
 
 export default function BrowseServicesPage() {
+  // useSearchParams needs a Suspense boundary on statically rendered pages.
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-3 text-muted-foreground">
+          <Loader2 className="size-7 animate-spin text-primary" aria-hidden="true" />
+          <p className="text-sm">Loading salon treatments...</p>
+        </div>
+      }
+    >
+      <BrowseServicesContent />
+    </Suspense>
+  );
+}
+
+function BrowseServicesContent() {
+  // Deep link support: home category tiles link to /services?category=…
+  const searchParams = useSearchParams();
+
   const [services, setServices] = useState<SalonService[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   // Search, Filter & Sort States
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    searchParams.get("category") || "all"
+  );
   const [sortBy, setSortBy] = useState<SortOption>("default");
 
   useEffect(() => {
@@ -71,6 +93,15 @@ export default function BrowseServicesPage() {
 
     return matchesName && matchesCategory;
   });
+
+  // Default menu + any extra categories that exist in the database, so a
+  // deep-linked category always has a matching option in the dropdown.
+  const availableCategories = Array.from(
+    new Set([
+      ...SERVICE_CATEGORIES,
+      ...services.map((service) => service.category).filter(Boolean),
+    ])
+  );
 
   // ২. Sorting By Price  (Low to High / High to Low)
   const sortedServices = [...filteredServices].sort((a, b) => {
@@ -135,7 +166,7 @@ export default function BrowseServicesPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All categories</SelectItem>
-                {SERVICE_CATEGORIES.map((category) => (
+                {availableCategories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
                   </SelectItem>

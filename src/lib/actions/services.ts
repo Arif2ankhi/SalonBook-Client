@@ -49,6 +49,33 @@ export const getActiveServices = async (): Promise<SalonService[]> => {
   return readJsonResponse<SalonService[]>(res, "Failed to fetch active services");
 };
 
+// Home: featured active services (default 6, newest first)
+export const getFeaturedServices = async (
+  limit = 6
+): Promise<SalonService[]> => {
+  const res = await fetch(
+    `${API_BASE_URL}/services/featured?limit=${limit}`,
+    { cache: "no-store" }
+  );
+
+  return readJsonResponse<SalonService[]>(
+    res,
+    "Failed to fetch featured services"
+  );
+};
+
+// Home: distinct categories of active services (explore-by-category links)
+export const getServiceCategories = async (): Promise<string[]> => {
+  const res = await fetch(`${API_BASE_URL}/services/categories`, {
+    cache: "no-store",
+  });
+
+  return readJsonResponse<string[]>(
+    res,
+    "Failed to fetch service categories"
+  );
+};
+
 // Service Details - Single service by id
 export const getServiceById = async (id: string): Promise<SalonService> => {
   const res = await fetch(`${API_BASE_URL}/services/${id}`, {
