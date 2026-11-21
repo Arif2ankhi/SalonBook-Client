@@ -1,16 +1,5 @@
 "use client";
 
-// const ManageServicesPage = () => {
-//     return (
-//         <div>
-//             <h2>Manage Services</h2>
-//         </div>
-//     );
-// };
-
-// export default ManageServicesPage;
-
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
